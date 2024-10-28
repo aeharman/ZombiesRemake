@@ -9,35 +9,57 @@ public class PlayerController : MonoBehaviour
 
     public float xSensitivity = 5;
 
-    public float ySensitivity = 100;
+    public float ySensitivity = 5;
+
+    public float speed = 5; 
 
 
     // Camera
     Camera mainPlayerCamera;
 
+    // Camera Transform 
+    Transform cameraTransform; 
+
     private void Start()
     {
         mainPlayerCamera = Camera.main; 
+
+        cameraTransform = Camera.main.transform;
 
         Cursor.lockState = CursorLockMode.Locked;
     }
 
     public void Look(Vector2 mousePosition)
     {
-        currentMousePosition = mousePosition;
+        mousePosition.x *= xSensitivity * Time.deltaTime; 
 
-        Transform transform = mainPlayerCamera.transform;
+        mousePosition.y *= ySensitivity * Time.deltaTime; 
 
-        float y = -currentMousePosition.y * ySensitivity * Time.deltaTime;
+        currentMousePosition += mousePosition;
 
-        transform.Rotate(y, 0, 0);
+        // Rotate Camera
 
-        Debug.Log(transform.rotation.eulerAngles); 
+        float y = -currentMousePosition.y;
 
-        if (transform.rotation.eulerAngles.x > 270)
-        {
-            transform.rotation = Quaternion.Euler(-85, 0, 0); 
-        }
+        y = Mathf.Clamp(y, -85, 85);
 
+        // Rotate Body
+
+        float x = currentMousePosition.x;
+
+        transform.rotation = Quaternion.Euler(0, x, 0);
+
+        cameraTransform.rotation = Quaternion.Euler(y, x, 0); 
+
+    }
+
+    public void Move(Vector2 info)
+    {
+        info.Normalize();
+
+        this.transform.position += this.transform.forward * speed * Time.deltaTime * info.y;
+        this.transform.position += this.transform.right * speed * Time.deltaTime * info.x; 
+
+        cameraTransform.position = transform.position;
     }
 }
