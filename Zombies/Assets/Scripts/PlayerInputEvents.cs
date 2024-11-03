@@ -18,7 +18,9 @@ public class PlayerInputEvents : MonoBehaviour
 
     public Action<Vector2> lookOccured;
 
-    public Action<Vector2> moveOccured; 
+    public Action<Vector2> moveOccured;
+
+    public Action jumpOccured; 
 
 
     private void Awake()
@@ -42,6 +44,7 @@ public class PlayerInputEvents : MonoBehaviour
     {
         lookOccured += controller.Look; 
         moveOccured += controller.Move;
+        jumpOccured += controller.Jump;
     }
 
     // Update is called once per frame
@@ -57,7 +60,13 @@ public class PlayerInputEvents : MonoBehaviour
         move = playerControls.RegularGame.Move.ReadValue<Vector2>();
 
         moveOccured?.Invoke(move);
-       
+
+        if (playerControls.RegularGame.Jump.ReadValue<float>() == 1)
+        {
+            jumpOccured?.Invoke();
+        }
+
+
         
     }
 }

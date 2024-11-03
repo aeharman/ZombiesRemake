@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,7 +12,28 @@ public class PlayerController : MonoBehaviour
 
     public float ySensitivity = 5;
 
-    public float speed = 5; 
+    public float speed = 5;
+
+    // Jumping Variables
+
+    public bool isGrounded = true;
+
+    public Transform characterFeet = null; 
+
+    public bool isFalling = false;
+
+    public float upwardVelocity = 0;
+
+    public float jumpForce = 5;
+
+
+    // Modelling gravity
+
+    private const float gravityUp = 4.9f;
+
+    private const float gravityDown = 9.8f; 
+
+    
 
 
     // Camera
@@ -27,6 +49,16 @@ public class PlayerController : MonoBehaviour
         cameraTransform = Camera.main.transform;
 
         Cursor.lockState = CursorLockMode.Locked;
+
+        // Get Child Transform - Todo, rework later
+        characterFeet = GameObject.FindGameObjectWithTag("CharacterFeet").transform; 
+    }
+
+    public void Update()
+    {
+        UpdateJump(); 
+
+
     }
 
     public void Look(Vector2 mousePosition)
@@ -61,5 +93,59 @@ public class PlayerController : MonoBehaviour
         this.transform.position += this.transform.right * speed * Time.deltaTime * info.x; 
 
         cameraTransform.position = transform.position;
+    }
+
+    public void Jump()
+    {
+        if (!isGrounded)
+        {
+            return; 
+        }
+        else
+        {
+            upwardVelocity = 1 * jumpForce;
+
+            isGrounded = false; 
+        }
+    }
+
+    public void UpdateJump()
+    {
+
+        transform.position += new Vector3(0, upwardVelocity * Time.deltaTime, 0);
+
+        if (!isGrounded && !isFalling)
+        {
+            upwardVelocity -= gravityUp * Time.deltaTime;
+        }
+        else if (!isGrounded)
+        {
+            upwardVelocity -= gravityDown * Time.deltaTime;
+        }
+
+        if (upwardVelocity < 0 && !isFalling)
+        {
+            isFalling = true;
+        }
+
+        if (!isGrounded)
+        {
+            isGrounded = IsGrounded();
+        }
+
+        if (isGrounded)
+        {
+            isFalling = false;
+
+            upwardVelocity = 0; 
+        }
+
+    }
+
+    bool IsGrounded()
+    {
+        RaycastHit hit; 
+
+        return Physics.SphereCast(characterFeet.position, 0.1f, -Vector3.up, out hit, 0.05f);
     }
 }
