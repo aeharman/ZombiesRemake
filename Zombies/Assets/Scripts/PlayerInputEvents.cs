@@ -14,13 +14,16 @@ public class PlayerInputEvents : MonoBehaviour
 
     public Vector2 lastMousePos = Vector2.zero;
 
-    public Vector2 move; 
+    public Vector2 move;
 
     public Action<Vector2> lookOccured;
 
     public Action<Vector2> moveOccured;
 
-    public Action jumpOccured; 
+    public Action jumpOccured;
+
+    public Action<float> adsOccured; 
+
 
 
     private void Awake()
@@ -44,7 +47,9 @@ public class PlayerInputEvents : MonoBehaviour
     {
         lookOccured += controller.Look; 
         moveOccured += controller.Move;
+        moveOccured += controller.MoveAnimationInfo;
         jumpOccured += controller.Jump;
+        adsOccured += controller.ProcessAim; 
     }
 
     // Update is called once per frame
@@ -66,7 +71,7 @@ public class PlayerInputEvents : MonoBehaviour
             jumpOccured?.Invoke();
         }
 
-
+        adsOccured?.Invoke(playerControls.RegularGame.Aim.ReadValue<float>()); 
         
     }
 }

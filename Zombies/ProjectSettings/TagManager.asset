@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - CharacterFeet
+  - CameraHolder
   layers:
   - Default
   - TransparentFX

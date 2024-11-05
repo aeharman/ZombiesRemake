@@ -33,20 +33,47 @@ public class PlayerController : MonoBehaviour
 
     private const float gravityDown = 9.8f; 
 
-    
-
-
     // Camera
     Camera mainPlayerCamera;
 
     // Camera Transform 
-    Transform cameraTransform; 
+    Transform cameraTransform;
+
+    // Current Positon and Last Position
+    Vector3 currentPos = Vector3.zero;
+    Vector3 lastPos = Vector3.zero;
+
+    // Gun Controller 
+    public GunManager gunManager;
+
+    public Action<moveDirInfo> moveDirContext;
+
+    // Boolean for Aiming 
+    [SerializeField] bool isAds = false;
+
+    public Action<bool> aimingEvent; 
+
+    public enum moveDirInfo
+    {
+        forward = 0, 
+        back = 1, 
+        right = 2, 
+        left = 3, 
+        stationary = 4
+    }
+
+    moveDirInfo moveDir = moveDirInfo.stationary; 
+
 
     private void Start()
     {
-        mainPlayerCamera = Camera.main; 
+        // Gun Manager Dependency
+        moveDirContext += gunManager.ReadCurrentCharacterContext;
+        aimingEvent += gunManager.SetIsADS; 
 
-        cameraTransform = Camera.main.transform;
+        mainPlayerCamera = Camera.main;
+
+        cameraTransform = GameObject.FindGameObjectWithTag("CameraHolder").transform;
 
         Cursor.lockState = CursorLockMode.Locked;
 
@@ -56,8 +83,8 @@ public class PlayerController : MonoBehaviour
 
     public void Update()
     {
-        UpdateJump(); 
 
+        UpdateJump();
 
     }
 
@@ -81,18 +108,66 @@ public class PlayerController : MonoBehaviour
 
         transform.rotation = Quaternion.Euler(0, x, 0);
 
-        cameraTransform.rotation = Quaternion.Euler(y, x, 0); 
+        cameraTransform.rotation = Quaternion.Euler(-y, x, 0); 
 
+    }
+
+    public void ProcessAim(float aim)
+    {
+        if (aim > 0)
+        {
+            isAds = true; 
+        }
+        else
+        {
+            isAds = false;
+        }
+
+        aimingEvent?.Invoke(isAds); 
+    }    
+
+    public void MoveAnimationInfo(Vector2 info)
+    {
+        if (info.x > 0)
+        {
+            moveDir = moveDirInfo.right; 
+        }
+        else if (info.x < 0)
+        {
+            moveDir = moveDirInfo.left; 
+        }
+        else
+        {
+            moveDir = moveDirInfo.stationary; 
+        }
+
+        moveDirContext?.Invoke(moveDir);
     }
 
     public void Move(Vector2 info)
     {
         info.Normalize();
 
-        this.transform.position += this.transform.forward * speed * Time.deltaTime * info.y;
-        this.transform.position += this.transform.right * speed * Time.deltaTime * info.x; 
+        if(!isAds)
+        {
 
-        cameraTransform.position = transform.position;
+            this.transform.position += this.transform.forward * speed * Time.deltaTime * info.y;
+            this.transform.position += this.transform.right * speed * Time.deltaTime * info.x;
+
+
+            var vec = new Vector3(-transform.position.x, transform.position.y, -transform.position.z);
+            cameraTransform.position = vec;
+        }
+        else
+        {
+
+            this.transform.position += this.transform.forward * (speed / 2) * Time.deltaTime * info.y;
+            this.transform.position += this.transform.right * (speed / 2) * Time.deltaTime * info.x;
+
+
+            var vec = new Vector3(-transform.position.x, transform.position.y, -transform.position.z);
+            cameraTransform.position = vec;
+        }
     }
 
     public void Jump()
