@@ -14,7 +14,9 @@ public class GunState
 
     protected GunTilt gunTilt = null;
 
-    protected float swivelSpeed; 
+    protected float swivelSpeed;
+
+    protected GunManager gunManger = null; 
 
 
     public virtual void OnStateEnter()
@@ -30,6 +32,12 @@ public class GunState
     {
 
     }
+
+    public GunState(GunManager manager)
+    {
+        gunManger = manager; 
+    }
+
 
     public virtual void ReadCurrentCharacterContext(PlayerController.moveDirInfo moveDir)
     {

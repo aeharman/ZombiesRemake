@@ -57,6 +57,14 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Sprint"",
+                    ""type"": ""Button"",
+                    ""id"": ""a2045aec-ccbf-4776-a460-69c3ae687d2f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -158,6 +166,17 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""Aim"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""eb6e5668-decd-47bd-ab03-809bcb6c17fa"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Sprint"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -177,6 +196,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_RegularGame_Shoot = m_RegularGame.FindAction("Shoot", throwIfNotFound: true);
         m_RegularGame_Jump = m_RegularGame.FindAction("Jump", throwIfNotFound: true);
         m_RegularGame_Aim = m_RegularGame.FindAction("Aim", throwIfNotFound: true);
+        m_RegularGame_Sprint = m_RegularGame.FindAction("Sprint", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -231,6 +251,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_RegularGame_Shoot;
     private readonly InputAction m_RegularGame_Jump;
     private readonly InputAction m_RegularGame_Aim;
+    private readonly InputAction m_RegularGame_Sprint;
     public struct RegularGameActions
     {
         private @PlayerControls m_Wrapper;
@@ -240,6 +261,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @Shoot => m_Wrapper.m_RegularGame_Shoot;
         public InputAction @Jump => m_Wrapper.m_RegularGame_Jump;
         public InputAction @Aim => m_Wrapper.m_RegularGame_Aim;
+        public InputAction @Sprint => m_Wrapper.m_RegularGame_Sprint;
         public InputActionMap Get() { return m_Wrapper.m_RegularGame; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -264,6 +286,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Aim.started -= m_Wrapper.m_RegularGameActionsCallbackInterface.OnAim;
                 @Aim.performed -= m_Wrapper.m_RegularGameActionsCallbackInterface.OnAim;
                 @Aim.canceled -= m_Wrapper.m_RegularGameActionsCallbackInterface.OnAim;
+                @Sprint.started -= m_Wrapper.m_RegularGameActionsCallbackInterface.OnSprint;
+                @Sprint.performed -= m_Wrapper.m_RegularGameActionsCallbackInterface.OnSprint;
+                @Sprint.canceled -= m_Wrapper.m_RegularGameActionsCallbackInterface.OnSprint;
             }
             m_Wrapper.m_RegularGameActionsCallbackInterface = instance;
             if (instance != null)
@@ -283,6 +308,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Aim.started += instance.OnAim;
                 @Aim.performed += instance.OnAim;
                 @Aim.canceled += instance.OnAim;
+                @Sprint.started += instance.OnSprint;
+                @Sprint.performed += instance.OnSprint;
+                @Sprint.canceled += instance.OnSprint;
             }
         }
     }
@@ -303,5 +331,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnShoot(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnAim(InputAction.CallbackContext context);
+        void OnSprint(InputAction.CallbackContext context);
     }
 }

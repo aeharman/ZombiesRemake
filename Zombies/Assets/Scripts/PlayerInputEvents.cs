@@ -22,7 +22,9 @@ public class PlayerInputEvents : MonoBehaviour
 
     public Action jumpOccured;
 
-    public Action<float> adsOccured; 
+    public Action<float> adsOccured;
+
+    public Action<float> sprintOccured; 
 
 
 
@@ -49,7 +51,8 @@ public class PlayerInputEvents : MonoBehaviour
         moveOccured += controller.Move;
         moveOccured += controller.MoveAnimationInfo;
         jumpOccured += controller.Jump;
-        adsOccured += controller.ProcessAim; 
+        adsOccured += controller.ProcessAim;
+        sprintOccured += controller.Sprint; 
     }
 
     // Update is called once per frame
@@ -72,6 +75,8 @@ public class PlayerInputEvents : MonoBehaviour
         }
 
         adsOccured?.Invoke(playerControls.RegularGame.Aim.ReadValue<float>()); 
+
+        sprintOccured?.Invoke(playerControls.RegularGame.Sprint.ReadValue<float>());
         
     }
 }

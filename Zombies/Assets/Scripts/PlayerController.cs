@@ -6,6 +6,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     // Mouse Position
+    [Header("Mouse Information")]
     Vector2 currentMousePosition = Vector2.zero;
 
     public float xSensitivity = 5;
@@ -15,7 +16,7 @@ public class PlayerController : MonoBehaviour
     public float speed = 5;
 
     // Jumping Variables
-
+    [Header("Jumping Information")]
     public bool isGrounded = true;
 
     public Transform characterFeet = null; 
@@ -28,30 +29,41 @@ public class PlayerController : MonoBehaviour
 
 
     // Modelling gravity
-
     private const float gravityUp = 4.9f;
 
     private const float gravityDown = 9.8f; 
 
-    // Camera
-    Camera mainPlayerCamera;
-
     // Camera Transform 
     Transform cameraTransform;
 
-    // Current Positon and Last Position
-    Vector3 currentPos = Vector3.zero;
-    Vector3 lastPos = Vector3.zero;
+    // Action Event for if the current player is moving
+    Action<bool> checkMoveEvent;
+
+    bool isMoving = false; 
 
     // Gun Controller 
     public GunManager gunManager;
 
     public Action<moveDirInfo> moveDirContext;
 
-    // Boolean for Aiming 
+    // Boolean for Aiming and Action for aiming event
+    [Header("Aiming Information")]
     [SerializeField] bool isAds = false;
 
-    public Action<bool> aimingEvent; 
+    public Action<bool> aimingEvent;
+
+    // Sprint information
+    [Header("Sprinting Information")]
+    [SerializeField] bool isSprinting = false;
+    [SerializeField] float speedModifier = 1.25f;
+    float sprintTimer = 4f;
+    [SerializeField] float sprintTimerMaxValue = 4f;
+    float stamRegenTimer = 1f;
+    [SerializeField] float stamRegenTimerMaxValue = 1f; 
+
+    public Action<bool> sprintingEvent; 
+
+
 
     public enum moveDirInfo
     {
@@ -69,34 +81,41 @@ public class PlayerController : MonoBehaviour
     {
         // Gun Manager Dependency
         moveDirContext += gunManager.ReadCurrentCharacterContext;
-        aimingEvent += gunManager.SetIsADS; 
-
-        mainPlayerCamera = Camera.main;
+        aimingEvent += gunManager.SetIsADS;
+        checkMoveEvent += gunManager.SetIsMoving;
+        sprintingEvent += gunManager.SetIsSprinting; 
 
         cameraTransform = GameObject.FindGameObjectWithTag("CameraHolder").transform;
 
         Cursor.lockState = CursorLockMode.Locked;
-
-        // Get Child Transform - Todo, rework later
-        characterFeet = GameObject.FindGameObjectWithTag("CharacterFeet").transform; 
     }
 
     public void Update()
     {
-
         UpdateJump();
-
     }
 
     public void Look(Vector2 mousePosition)
     {
-        mousePosition.x *= xSensitivity * Time.deltaTime; 
+        if (isAds)
+        {
 
-        mousePosition.y *= ySensitivity * Time.deltaTime; 
+            mousePosition.x *= (xSensitivity / 2) * Time.deltaTime;
 
-        currentMousePosition += mousePosition;
+            mousePosition.y *= (ySensitivity / 2) * Time.deltaTime;
 
-        // Rotate Camera
+            currentMousePosition += mousePosition;
+        }
+        else
+        {
+            mousePosition.x *= xSensitivity * Time.deltaTime;
+
+            mousePosition.y *= ySensitivity * Time.deltaTime;
+
+            currentMousePosition += mousePosition;
+        }
+
+        // Rotate Camera and clamp rotation 
 
         float y = -currentMousePosition.y;
 
@@ -108,7 +127,7 @@ public class PlayerController : MonoBehaviour
 
         transform.rotation = Quaternion.Euler(0, x, 0);
 
-        cameraTransform.rotation = Quaternion.Euler(-y, x, 0); 
+        cameraTransform.rotation = Quaternion.Euler(-y, x, 0);
 
     }
 
@@ -150,9 +169,15 @@ public class PlayerController : MonoBehaviour
 
         if(!isAds)
         {
+            var speedModified = speed;
 
-            this.transform.position += this.transform.forward * speed * Time.deltaTime * info.y;
-            this.transform.position += this.transform.right * speed * Time.deltaTime * info.x;
+            if (isSprinting && isGrounded)
+            {
+                speedModified *= speedModifier;
+            }
+
+            this.transform.position += this.transform.forward * speedModified * Time.deltaTime * info.y;
+            this.transform.position += this.transform.right * speedModified * Time.deltaTime * info.x;
 
 
             var vec = new Vector3(-transform.position.x, transform.position.y, -transform.position.z);
@@ -168,6 +193,11 @@ public class PlayerController : MonoBehaviour
             var vec = new Vector3(-transform.position.x, transform.position.y, -transform.position.z);
             cameraTransform.position = vec;
         }
+
+        if (info.Equals(Vector2.zero)) isMoving = false;
+        else isMoving = true;
+
+        checkMoveEvent?.Invoke(isMoving); 
     }
 
     public void Jump()
@@ -203,10 +233,7 @@ public class PlayerController : MonoBehaviour
             isFalling = true;
         }
 
-        if (!isGrounded)
-        {
-            isGrounded = IsGrounded();
-        }
+        isGrounded = IsGrounded();
 
         if (isGrounded)
         {
@@ -215,6 +242,20 @@ public class PlayerController : MonoBehaviour
             upwardVelocity = 0; 
         }
 
+    }
+
+    public void Sprint(float sprint)
+    {
+        if (sprint > 0 && !isAds && isMoving)
+        {
+            isSprinting = true;
+        }
+        else
+        {
+            isSprinting = false; 
+        }
+
+        sprintingEvent?.Invoke(isSprinting); 
     }
 
     bool IsGrounded()

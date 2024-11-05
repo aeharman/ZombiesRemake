@@ -9,7 +9,7 @@ public class Ads : GunState
     public Transform AdsPosition; 
 
     // Intializes the gunState
-    public Ads(Transform gunPos, Transform AdsPos, float swivel)
+    public Ads(Transform gunPos, Transform AdsPos, float swivel, GunManager manager) : base(manager)
     {
         gunPosition = gunPos;
         AdsPosition = AdsPos;

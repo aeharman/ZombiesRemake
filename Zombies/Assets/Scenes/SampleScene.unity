@@ -434,11 +434,14 @@ MonoBehaviour:
   ySensitivity: 10
   speed: 5
   isGrounded: 1
-  characterFeet: {fileID: 0}
+  characterFeet: {fileID: 16377941}
   isFalling: 0
   upwardVelocity: 0
   jumpForce: 1.5
   gunManager: {fileID: 1956994780}
+  isAds: 0
+  isSprinting: 0
+  speedModifier: 2
 --- !u!143 &1286240696
 CharacterController:
   m_ObjectHideFlags: 0
@@ -465,7 +468,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1286240694}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 0.11, z: 0}
+  m_LocalPosition: {x: 0, y: 0.6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 16377941}
@@ -487,7 +490,7 @@ MonoBehaviour:
   currentMousePos: {x: 0, y: 0}
   lastMousePos: {x: 0, y: 0}
   move: {x: 0, y: 0}
---- !u!1 &1344696942
+--- !u!1 &1616871634
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -495,38 +498,37 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1344696946}
-  - component: {fileID: 1344696945}
-  - component: {fileID: 1344696944}
-  - component: {fileID: 1344696943}
+  - component: {fileID: 1616871638}
+  - component: {fileID: 1616871637}
+  - component: {fileID: 1616871636}
+  - component: {fileID: 1616871635}
   m_Layer: 0
-  m_Name: Plane
+  m_Name: Flooor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!64 &1344696943
-MeshCollider:
+--- !u!65 &1616871635
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1344696942}
+  m_GameObject: {fileID: 1616871634}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &1344696944
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!23 &1616871636
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1344696942}
+  m_GameObject: {fileID: 1616871634}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -561,27 +563,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &1344696945
+--- !u!33 &1616871637
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1344696942}
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!4 &1344696946
+  m_GameObject: {fileID: 1616871634}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &1616871638
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1344696942}
+  m_GameObject: {fileID: 1616871634}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.02, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0.2, y: -2.14, z: 0.35}
+  m_LocalScale: {x: 20.650831, y: 1.4441, z: 19.846556}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1861428042
 GameObject:
@@ -676,7 +678,7 @@ Transform:
   - {fileID: 963194228}
   - {fileID: 1960936793}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1956994780
 MonoBehaviour:
@@ -694,8 +696,10 @@ MonoBehaviour:
   equippedGuns: []
   ADS: {fileID: 1861428042}
   HipFireObj: {fileID: 1925719030}
-  GunAdsSpeed: 5
+  GunAdsSpeed: 10
   isAimingDownSight: 0
+  amplitude: 0.005
+  frequency: 4
 --- !u!1 &1960936792 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1487774384131766, guid: ee329c3cd08e58645834d20702d7f6c6, type: 3}
@@ -720,4 +724,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveDir: 0
   zTilt: 5
+  zTiltValue: 10
   speed: 50

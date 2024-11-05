@@ -6,7 +6,9 @@ public class GunTilt : MonoBehaviour
 {
     public PlayerController.moveDirInfo moveDir; 
 
-    public float zTilt = 15;
+    public float zTilt = 10;
+
+    public float zTiltValue = 10; 
 
     public float speed = 5; 
     // Start is called before the first frame update
@@ -31,11 +33,11 @@ public class GunTilt : MonoBehaviour
 
         if (moveDir == PlayerController.moveDirInfo.left)
         {
-            zTilt = -15; 
+            zTilt = -zTiltValue; 
         }
         else if (moveDir == PlayerController.moveDirInfo.right)
         {
-            zTilt = 15; 
+            zTilt = zTiltValue; 
         }
         else
         {
