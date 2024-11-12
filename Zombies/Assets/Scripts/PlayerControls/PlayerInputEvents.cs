@@ -24,7 +24,9 @@ public class PlayerInputEvents : MonoBehaviour
 
     public Action<float> adsOccured;
 
-    public Action<float> sprintOccured; 
+    public Action<float> sprintOccured;
+
+    public Action<int> holdFiringOccured; 
 
 
 
@@ -52,7 +54,10 @@ public class PlayerInputEvents : MonoBehaviour
         moveOccured += controller.MoveAnimationInfo;
         jumpOccured += controller.Jump;
         adsOccured += controller.ProcessAim;
-        sprintOccured += controller.Sprint; 
+        sprintOccured += controller.Sprint;
+        playerControls.RegularGame.ShootTap.performed += controller.FireClicked;
+        holdFiringOccured += controller.ProcessFire; 
+        
     }
 
     // Update is called once per frame
@@ -77,6 +82,15 @@ public class PlayerInputEvents : MonoBehaviour
         adsOccured?.Invoke(playerControls.RegularGame.Aim.ReadValue<float>()); 
 
         sprintOccured?.Invoke(playerControls.RegularGame.Sprint.ReadValue<float>());
+
+        if (playerControls.RegularGame.ShootHold.phase == UnityEngine.InputSystem.InputActionPhase.Performed)
+        {
+            holdFiringOccured?.Invoke(1); 
+        }
+        else
+        {
+            holdFiringOccured?.Invoke(0); 
+        }
         
     }
 }

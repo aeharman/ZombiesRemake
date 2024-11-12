@@ -1,7 +1,9 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
@@ -33,7 +35,7 @@ public class PlayerController : MonoBehaviour
 
     private const float gravityDown = 9.8f; 
 
-    // Camera Transform 
+    // Camera and Camera Transform 
     Transform cameraTransform;
 
     // Action Event for if the current player is moving
@@ -51,6 +53,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] bool isAds = false;
 
     public Action<bool> aimingEvent;
+
+    // Firing Event
+    [Header("Firing Information")]
+    [SerializeField] bool isFiring = false; 
+
+    public Action<bool> holdFiringEvent;
+    public Action tapFire; 
 
     // Sprint information
     [Header("Sprinting Information")]
@@ -83,7 +92,9 @@ public class PlayerController : MonoBehaviour
         moveDirContext += gunManager.ReadCurrentCharacterContext;
         aimingEvent += gunManager.SetIsADS;
         checkMoveEvent += gunManager.SetIsMoving;
-        sprintingEvent += gunManager.SetIsSprinting; 
+        sprintingEvent += gunManager.SetIsSprinting;
+        holdFiringEvent += gunManager.SustainedFiringGun;
+        tapFire += gunManager.TapFireGun; 
 
         cameraTransform = GameObject.FindGameObjectWithTag("CameraHolder").transform;
 
@@ -246,7 +257,7 @@ public class PlayerController : MonoBehaviour
 
     public void Sprint(float sprint)
     {
-        if (sprint > 0 && !isAds && isMoving)
+        if (sprint > 0 && !isAds && isMoving && !isFiring)
         {
             isSprinting = true;
         }
@@ -256,6 +267,31 @@ public class PlayerController : MonoBehaviour
         }
 
         sprintingEvent?.Invoke(isSprinting); 
+    }
+
+    // Todo Send Shooting information to the gun
+    public void ProcessFire(int context)
+    {
+        // Shake the camera
+        if (context == 1)
+        {
+            isFiring = true; 
+        }
+        else
+        {
+            isFiring = false; 
+        }
+
+        holdFiringEvent?.Invoke(isFiring);
+    }
+
+    // TODO Send Shooting information to the gun
+    public void FireClicked(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Performed)
+        {
+            tapFire?.Invoke(); 
+        }
     }
 
     bool IsGrounded()

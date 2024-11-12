@@ -22,12 +22,20 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Shoot",
+                    "name": "ShootHold",
                     "type": "Button",
                     "id": "52e36476-1716-472b-9ae6-315884b5a861",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "Hold(duration=0.21)"
+                },
+                {
+                    "name": "ShootTap",
+                    "type": "Button",
+                    "id": "e3918449-7e44-4b8a-9b78-e6573da2cbcc",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Tap"
                 },
                 {
                     "name": "Jump",
@@ -128,7 +136,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Shoot",
+                    "action": "ShootHold",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -162,6 +170,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Sprint",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e86b5730-a5a6-4542-b87c-47728a890acb",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "Tap",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ShootTap",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

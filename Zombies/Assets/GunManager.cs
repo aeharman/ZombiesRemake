@@ -33,17 +33,30 @@ public class GunManager : MonoBehaviour
     // Considers if the player is moving
     private bool isMoving = false;
 
-    private bool isSprinting = false; 
+    private bool isSprinting = false;
+
+    // Gun Animator
+    public Animator currentGunAnimator; 
+
 
     // Gun Bobbing 
     public float amplitude = 0.01f;
 
-    public float frequency = 2; 
+    public float frequency = 2;
+
+    // Camera Shake
+    Camera cam;
+    Transform camShakeTransform; 
 
     // Start is called before the first frame update
     void Start()
     {
-        currentGunTiltManager = currentGun.GetComponent<GunTilt>();
+        // Intialize Camera Variables 
+        cam = Camera.main; 
+        camShakeTransform = cam.transform;
+
+        // Initialize Gun State
+        currentGunTiltManager = currentGun.GetComponentInChildren<GunTilt>();
 
         CreateGunStates(); 
 
@@ -128,5 +141,23 @@ public class GunManager : MonoBehaviour
     public void ReadCurrentCharacterContext(PlayerController.moveDirInfo moveDir)
     {
         currentGunState.ReadCurrentCharacterContext(moveDir);
+    }
+
+    public void SustainedFiringGun(bool isFiring)
+    {
+        currentGunAnimator.SetBool("IsFiring", isFiring); 
+    }
+
+    public void TapFireGun()
+    {
+        currentGunAnimator.Play("Shooting"); 
+    }
+
+    private void CameraShake()
+    {
+        float rY = Mathf.Sin(Time.time * 32) * 0.008f;
+        float rZ = Mathf.Cos(Time.time * 32) * 0.2f;
+
+        camShakeTransform.localPosition = Vector3.Lerp(camShakeTransform.localPosition, camShakeTransform.localPosition + new Vector3(0, rY, rZ), Time.deltaTime);
     }
 }

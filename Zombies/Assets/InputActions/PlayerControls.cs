@@ -35,12 +35,20 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """"
                 },
                 {
-                    ""name"": ""Shoot"",
+                    ""name"": ""ShootHold"",
                     ""type"": ""Button"",
                     ""id"": ""52e36476-1716-472b-9ae6-315884b5a861"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": """"
+                    ""interactions"": ""Hold(duration=0.21)""
+                },
+                {
+                    ""name"": ""ShootTap"",
+                    ""type"": ""Button"",
+                    ""id"": ""e3918449-7e44-4b8a-9b78-e6573da2cbcc"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Tap""
                 },
                 {
                     ""name"": ""Jump"",
@@ -141,7 +149,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Shoot"",
+                    ""action"": ""ShootHold"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -177,6 +185,17 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""Sprint"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e86b5730-a5a6-4542-b87c-47728a890acb"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": ""Tap"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ShootTap"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -193,7 +212,8 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_RegularGame = asset.FindActionMap("RegularGame", throwIfNotFound: true);
         m_RegularGame_Move = m_RegularGame.FindAction("Move", throwIfNotFound: true);
         m_RegularGame_Look = m_RegularGame.FindAction("Look", throwIfNotFound: true);
-        m_RegularGame_Shoot = m_RegularGame.FindAction("Shoot", throwIfNotFound: true);
+        m_RegularGame_ShootHold = m_RegularGame.FindAction("ShootHold", throwIfNotFound: true);
+        m_RegularGame_ShootTap = m_RegularGame.FindAction("ShootTap", throwIfNotFound: true);
         m_RegularGame_Jump = m_RegularGame.FindAction("Jump", throwIfNotFound: true);
         m_RegularGame_Aim = m_RegularGame.FindAction("Aim", throwIfNotFound: true);
         m_RegularGame_Sprint = m_RegularGame.FindAction("Sprint", throwIfNotFound: true);
@@ -248,7 +268,8 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private IRegularGameActions m_RegularGameActionsCallbackInterface;
     private readonly InputAction m_RegularGame_Move;
     private readonly InputAction m_RegularGame_Look;
-    private readonly InputAction m_RegularGame_Shoot;
+    private readonly InputAction m_RegularGame_ShootHold;
+    private readonly InputAction m_RegularGame_ShootTap;
     private readonly InputAction m_RegularGame_Jump;
     private readonly InputAction m_RegularGame_Aim;
     private readonly InputAction m_RegularGame_Sprint;
@@ -258,7 +279,8 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public RegularGameActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_RegularGame_Move;
         public InputAction @Look => m_Wrapper.m_RegularGame_Look;
-        public InputAction @Shoot => m_Wrapper.m_RegularGame_Shoot;
+        public InputAction @ShootHold => m_Wrapper.m_RegularGame_ShootHold;
+        public InputAction @ShootTap => m_Wrapper.m_RegularGame_ShootTap;
         public InputAction @Jump => m_Wrapper.m_RegularGame_Jump;
         public InputAction @Aim => m_Wrapper.m_RegularGame_Aim;
         public InputAction @Sprint => m_Wrapper.m_RegularGame_Sprint;
@@ -277,9 +299,12 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Look.started -= m_Wrapper.m_RegularGameActionsCallbackInterface.OnLook;
                 @Look.performed -= m_Wrapper.m_RegularGameActionsCallbackInterface.OnLook;
                 @Look.canceled -= m_Wrapper.m_RegularGameActionsCallbackInterface.OnLook;
-                @Shoot.started -= m_Wrapper.m_RegularGameActionsCallbackInterface.OnShoot;
-                @Shoot.performed -= m_Wrapper.m_RegularGameActionsCallbackInterface.OnShoot;
-                @Shoot.canceled -= m_Wrapper.m_RegularGameActionsCallbackInterface.OnShoot;
+                @ShootHold.started -= m_Wrapper.m_RegularGameActionsCallbackInterface.OnShootHold;
+                @ShootHold.performed -= m_Wrapper.m_RegularGameActionsCallbackInterface.OnShootHold;
+                @ShootHold.canceled -= m_Wrapper.m_RegularGameActionsCallbackInterface.OnShootHold;
+                @ShootTap.started -= m_Wrapper.m_RegularGameActionsCallbackInterface.OnShootTap;
+                @ShootTap.performed -= m_Wrapper.m_RegularGameActionsCallbackInterface.OnShootTap;
+                @ShootTap.canceled -= m_Wrapper.m_RegularGameActionsCallbackInterface.OnShootTap;
                 @Jump.started -= m_Wrapper.m_RegularGameActionsCallbackInterface.OnJump;
                 @Jump.performed -= m_Wrapper.m_RegularGameActionsCallbackInterface.OnJump;
                 @Jump.canceled -= m_Wrapper.m_RegularGameActionsCallbackInterface.OnJump;
@@ -299,9 +324,12 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Look.started += instance.OnLook;
                 @Look.performed += instance.OnLook;
                 @Look.canceled += instance.OnLook;
-                @Shoot.started += instance.OnShoot;
-                @Shoot.performed += instance.OnShoot;
-                @Shoot.canceled += instance.OnShoot;
+                @ShootHold.started += instance.OnShootHold;
+                @ShootHold.performed += instance.OnShootHold;
+                @ShootHold.canceled += instance.OnShootHold;
+                @ShootTap.started += instance.OnShootTap;
+                @ShootTap.performed += instance.OnShootTap;
+                @ShootTap.canceled += instance.OnShootTap;
                 @Jump.started += instance.OnJump;
                 @Jump.performed += instance.OnJump;
                 @Jump.canceled += instance.OnJump;
@@ -328,7 +356,8 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     {
         void OnMove(InputAction.CallbackContext context);
         void OnLook(InputAction.CallbackContext context);
-        void OnShoot(InputAction.CallbackContext context);
+        void OnShootHold(InputAction.CallbackContext context);
+        void OnShootTap(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnAim(InputAction.CallbackContext context);
         void OnSprint(InputAction.CallbackContext context);
