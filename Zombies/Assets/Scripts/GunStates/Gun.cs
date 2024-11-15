@@ -13,7 +13,9 @@ public enum GunType
 public class Gun : MonoBehaviour
 {
     // TODO Make a process to set audio manager and gun manager for all guns
-    public AudioManager audioManager; 
+    public AudioManager audioManager;
+
+    private Animator animator; 
 
     [Header("Ammo Information")]
     public int clipSize;
@@ -33,7 +35,8 @@ public class Gun : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        animator = GetComponent<Animator>();
+        animator.SetInteger("Ammo", currentAmmo);
     }
 
     // Update is called once per frame
@@ -45,6 +48,10 @@ public class Gun : MonoBehaviour
     public void Fire()
     {
         --currentAmmo;
-        audioManager.PlayAudioClip(); 
+        animator.SetInteger("Ammo", currentAmmo); 
+        if (currentAmmo > 0)
+        {
+            audioManager.PlayAudioClip();
+        }
     }
 }

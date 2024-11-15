@@ -145,12 +145,22 @@ public class GunManager : MonoBehaviour
 
     public void SustainedFiringGun(bool isFiring)
     {
-        currentGunAnimator.SetBool("IsFiring", isFiring); 
+        if (currentGunAnimator.GetInteger("Ammo") > 0)
+        {
+            currentGunAnimator.SetBool("IsFiring", isFiring);
+        }
+        else if (currentGunAnimator.GetBool("IsFiring"))
+        {
+            currentGunAnimator.SetBool("IsFiring", false); 
+        }
     }
 
     public void TapFireGun()
     {
-        currentGunAnimator.Play("Shooting"); 
+        if (currentGunAnimator.GetInteger("Ammo") > 0)
+        {
+            currentGunAnimator.Play("Shooting");
+        }
     }
 
     private void CameraShake()
