@@ -23,12 +23,18 @@ public class Gun : MonoBehaviour
 
     [Header("Gun Information")]
     public GunType type;
-    public float damage;
+    public int damage = 1;
     public float fireRate;
+    // TODO GET programatically
+    public GameObject gunSpout; 
 
     [Header("ADS and Hip Zones")]
     public Vector3 ads = Vector3.zero;
     public Vector3 hip = Vector3.zero;
+
+    // Hits container
+    [Header("Objects Hit")]
+    public List<RaycastHit> hits = new List<RaycastHit>();
 
     
 
@@ -48,10 +54,35 @@ public class Gun : MonoBehaviour
     public void Fire()
     {
         --currentAmmo;
-        animator.SetInteger("Ammo", currentAmmo); 
-        if (currentAmmo > 0)
+        animator.SetInteger("Ammo", currentAmmo);
+        audioManager.PlayAudioClip();
+        RayCastShoot(); 
+    }
+
+    // TODO weaken damage overtime
+    public void RayCastShoot()
+    {
+        Ray ray = new Ray(gunSpout.transform.position, -gunSpout.transform.forward);
+
+        hits.AddRange(Physics.RaycastAll(ray, 300));
+
+        foreach (RaycastHit hit in hits)
         {
-            audioManager.PlayAudioClip();
+            if (hit.collider.gameObject.TryGetComponent<Enemy>(out Enemy e))
+            {
+                e.TakeDamage(damage); 
+            }
         }
+
+        hits.Clear(); 
+
+
+    }
+
+    private void OnDrawGizmos()
+    {
+        Ray ray = new Ray(gunSpout.transform.position, -gunSpout.transform.forward);
+
+        Gizmos.DrawRay(ray);
     }
 }
