@@ -70,7 +70,13 @@ public class PlayerController : MonoBehaviour
     float stamRegenTimer = 1f;
     [SerializeField] float stamRegenTimerMaxValue = 1f; 
 
-    public Action<bool> sprintingEvent; 
+    public Action<bool> sprintingEvent;
+
+    // Reloading Information
+    [Header("Reloading Information")]
+
+    public bool isReloading = false;
+    public Action reloadingEvent; 
 
 
 
@@ -94,7 +100,9 @@ public class PlayerController : MonoBehaviour
         checkMoveEvent += gunManager.SetIsMoving;
         sprintingEvent += gunManager.SetIsSprinting;
         holdFiringEvent += gunManager.SustainedFiringGun;
-        tapFire += gunManager.TapFireGun; 
+        tapFire += gunManager.TapFireGun;
+        reloadingEvent += gunManager.ReloadGun;
+        gunManager.currentGunScript.reloadFinished += ReloadFinished; 
 
         cameraTransform = GameObject.FindGameObjectWithTag("CameraHolder").transform;
 
@@ -187,21 +195,21 @@ public class PlayerController : MonoBehaviour
                 speedModified *= speedModifier;
             }
 
-            this.transform.position += this.transform.forward * speedModified * Time.deltaTime * info.y;
-            this.transform.position += this.transform.right * speedModified * Time.deltaTime * info.x;
+            this.transform.position += -this.transform.forward * speedModified * Time.deltaTime * info.y;
+            this.transform.position += -this.transform.right * speedModified * Time.deltaTime * info.x;
 
 
-            var vec = new Vector3(-transform.position.x, transform.position.y, -transform.position.z);
+            var vec = new Vector3(transform.position.x, transform.position.y, transform.position.z);
             cameraTransform.position = vec;
         }
         else
         {
 
-            this.transform.position += this.transform.forward * (speed / 2) * Time.deltaTime * info.y;
-            this.transform.position += this.transform.right * (speed / 2) * Time.deltaTime * info.x;
+            this.transform.position += -this.transform.forward * (speed / 2) * Time.deltaTime * info.y;
+            this.transform.position += -this.transform.right * (speed / 2) * Time.deltaTime * info.x;
 
 
-            var vec = new Vector3(-transform.position.x, transform.position.y, -transform.position.z);
+            var vec = new Vector3(transform.position.x, transform.position.y, transform.position.z);
             cameraTransform.position = vec;
         }
 
@@ -257,7 +265,7 @@ public class PlayerController : MonoBehaviour
 
     public void Sprint(float sprint)
     {
-        if (sprint > 0 && !isAds && isMoving && !isFiring)
+        if (sprint > 0 && !isAds && isMoving && !isFiring && !isReloading)
         {
             isSprinting = true;
         }
@@ -290,8 +298,26 @@ public class PlayerController : MonoBehaviour
     {
         if (context.phase == InputActionPhase.Performed)
         {
-            tapFire?.Invoke(); 
+
+            tapFire?.Invoke();
+
+            isReloading = false; 
         }
+    }
+
+    public void Reload(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Performed && !isReloading)
+        {
+            isReloading = true;
+
+            reloadingEvent?.Invoke(); 
+        }
+    }
+
+    public void ReloadFinished()
+    {
+        isReloading = false; 
     }
 
     bool IsGrounded()

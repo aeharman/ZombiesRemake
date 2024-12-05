@@ -9,7 +9,10 @@ public class Enemy : MonoBehaviour
     public int health = 1;
 
     [Header("Collider Information")]
-    public Collider collider; 
+    public Collider collider;
+
+    [Header("Player Information")]
+    public GameObject playerObj; 
 
     // Start is called before the first frame update
     void Start()
@@ -20,7 +23,19 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        if (playerObj != null)
+        {
+            this.transform.LookAt(playerObj.transform.position);
+        }
+
+        this.transform.position += this.transform.forward * Time.deltaTime * 3; 
         
+
+        if (Vector3.Distance(transform.position, playerObj.transform.position) < 0.05)
+        {
+             
+        }
     }
 
     // TODO Buffer destroy with animation for death and remove collider

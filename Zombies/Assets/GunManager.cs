@@ -4,18 +4,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class GunManager : MonoBehaviour
 {
     // Current Gun Equipped by the player
     public GameObject currentGun;
 
+    public Gun currentGunScript;
+
     public List<GameObject> equippedGuns = new List<GameObject>();
 
-    public Dictionary<int, GameObject> possibleGuns = new Dictionary<int, GameObject> ();
+    public Dictionary<GameObject, Gun> possibleGuns = new Dictionary<GameObject, Gun> ();
+
+    public List<GameObject> possibleGunsList = new List<GameObject>();
+
+    public List<Gun> possibleGunsScriptsList = new List<Gun>(); 
 
     // Manages the tilt of the gun and the current gunstate
-    private GunTilt currentGunTiltManager;
+    public GunTilt currentGunTiltManager;
 
     private GunState currentGunState;
 
@@ -46,7 +53,13 @@ public class GunManager : MonoBehaviour
 
     // Camera Shake
     Camera cam;
-    Transform camShakeTransform; 
+    Transform camShakeTransform;
+
+    // Awake
+    private void Awake()
+    {
+     
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -56,11 +69,11 @@ public class GunManager : MonoBehaviour
         camShakeTransform = cam.transform;
 
         // Initialize Gun State
-        currentGunTiltManager = currentGun.GetComponentInChildren<GunTilt>();
+        //currentGunTiltManager = currentGun.GetComponentInChildren<GunTilt>();
 
         CreateGunStates(); 
 
-        currentGunState = gunStates[GunState.State.hipFire]; 
+        currentGunState = gunStates[GunState.State.hipFire];
     }
 
     public void CreateGunStates()
@@ -145,13 +158,17 @@ public class GunManager : MonoBehaviour
 
     public void SustainedFiringGun(bool isFiring)
     {
-        if (currentGunAnimator.GetInteger("Ammo") > 0)
+        // Check gun type 
+        if (currentGunScript.type == GunType.automatic)
         {
-            currentGunAnimator.SetBool("IsFiring", isFiring);
-        }
-        else if (currentGunAnimator.GetBool("IsFiring"))
-        {
-            currentGunAnimator.SetBool("IsFiring", false); 
+            if (currentGunAnimator.GetInteger("Ammo") > 0)
+            {
+                currentGunAnimator.SetBool("IsFiring", isFiring);
+            }
+            else if (currentGunAnimator.GetBool("IsFiring"))
+            {
+                currentGunAnimator.SetBool("IsFiring", false);
+            }
         }
     }
 
@@ -160,6 +177,18 @@ public class GunManager : MonoBehaviour
         if (currentGunAnimator.GetInteger("Ammo") > 0)
         {
             currentGunAnimator.Play("Shooting");
+        }
+        else
+        {
+
+        }
+    }
+
+    public void ReloadGun()
+    {
+        if (currentGunAnimator.GetInteger("Ammo") < currentGunScript.clipSize)
+        {
+            currentGunAnimator.Play("Reload"); 
         }
     }
 

@@ -73,6 +73,14 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Reload"",
+                    ""type"": ""Button"",
+                    ""id"": ""a656d907-2674-4095-8f71-fa9d71b40cbd"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -196,6 +204,17 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""ShootTap"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7dcaa83f-577e-4ae7-a02d-4c281348b7d1"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Reload"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -217,6 +236,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_RegularGame_Jump = m_RegularGame.FindAction("Jump", throwIfNotFound: true);
         m_RegularGame_Aim = m_RegularGame.FindAction("Aim", throwIfNotFound: true);
         m_RegularGame_Sprint = m_RegularGame.FindAction("Sprint", throwIfNotFound: true);
+        m_RegularGame_Reload = m_RegularGame.FindAction("Reload", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -273,6 +293,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_RegularGame_Jump;
     private readonly InputAction m_RegularGame_Aim;
     private readonly InputAction m_RegularGame_Sprint;
+    private readonly InputAction m_RegularGame_Reload;
     public struct RegularGameActions
     {
         private @PlayerControls m_Wrapper;
@@ -284,6 +305,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @Jump => m_Wrapper.m_RegularGame_Jump;
         public InputAction @Aim => m_Wrapper.m_RegularGame_Aim;
         public InputAction @Sprint => m_Wrapper.m_RegularGame_Sprint;
+        public InputAction @Reload => m_Wrapper.m_RegularGame_Reload;
         public InputActionMap Get() { return m_Wrapper.m_RegularGame; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -314,6 +336,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Sprint.started -= m_Wrapper.m_RegularGameActionsCallbackInterface.OnSprint;
                 @Sprint.performed -= m_Wrapper.m_RegularGameActionsCallbackInterface.OnSprint;
                 @Sprint.canceled -= m_Wrapper.m_RegularGameActionsCallbackInterface.OnSprint;
+                @Reload.started -= m_Wrapper.m_RegularGameActionsCallbackInterface.OnReload;
+                @Reload.performed -= m_Wrapper.m_RegularGameActionsCallbackInterface.OnReload;
+                @Reload.canceled -= m_Wrapper.m_RegularGameActionsCallbackInterface.OnReload;
             }
             m_Wrapper.m_RegularGameActionsCallbackInterface = instance;
             if (instance != null)
@@ -339,6 +364,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Sprint.started += instance.OnSprint;
                 @Sprint.performed += instance.OnSprint;
                 @Sprint.canceled += instance.OnSprint;
+                @Reload.started += instance.OnReload;
+                @Reload.performed += instance.OnReload;
+                @Reload.canceled += instance.OnReload;
             }
         }
     }
@@ -361,5 +389,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnJump(InputAction.CallbackContext context);
         void OnAim(InputAction.CallbackContext context);
         void OnSprint(InputAction.CallbackContext context);
+        void OnReload(InputAction.CallbackContext context);
     }
 }

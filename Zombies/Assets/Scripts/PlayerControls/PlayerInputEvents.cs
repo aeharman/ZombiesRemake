@@ -10,6 +10,8 @@ public class PlayerInputEvents : MonoBehaviour
 
     PlayerControls playerControls;
 
+    GunManager gunManager;
+
     public Vector2 currentMousePos = Vector2.zero;
 
     public Vector2 lastMousePos = Vector2.zero;
@@ -26,7 +28,7 @@ public class PlayerInputEvents : MonoBehaviour
 
     public Action<float> sprintOccured;
 
-    public Action<int> holdFiringOccured; 
+    public Action<int> holdFiringOccured;
 
 
 
@@ -56,13 +58,15 @@ public class PlayerInputEvents : MonoBehaviour
         adsOccured += controller.ProcessAim;
         sprintOccured += controller.Sprint;
         playerControls.RegularGame.ShootTap.performed += controller.FireClicked;
-        holdFiringOccured += controller.ProcessFire; 
+        holdFiringOccured += controller.ProcessFire;
+        playerControls.RegularGame.Reload.performed += controller.Reload;
         
     }
 
     // Update is called once per frame
     void Update()
     {
+
         currentMousePos = playerControls.RegularGame.Look.ReadValue<Vector2>();
 
         if (!currentMousePos.Equals(lastMousePos)) 
@@ -91,6 +95,5 @@ public class PlayerInputEvents : MonoBehaviour
         {
             holdFiringOccured?.Invoke(0); 
         }
-        
     }
 }

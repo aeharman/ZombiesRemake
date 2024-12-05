@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,7 +16,9 @@ public class Gun : MonoBehaviour
     // TODO Make a process to set audio manager and gun manager for all guns
     public AudioManager audioManager;
 
-    private Animator animator; 
+    private Animator animator;
+
+    public Action reloadFinished; 
 
     [Header("Ammo Information")]
     public int clipSize;
@@ -35,6 +38,11 @@ public class Gun : MonoBehaviour
     // Hits container
     [Header("Objects Hit")]
     public List<RaycastHit> hits = new List<RaycastHit>();
+
+    // Player Possession
+    [Header("Player Information")]
+    public bool doesPlayerPossess = false;
+    public bool isCurrentGun = false; 
 
     
 
@@ -57,6 +65,15 @@ public class Gun : MonoBehaviour
         animator.SetInteger("Ammo", currentAmmo);
         audioManager.PlayAudioClip();
         RayCastShoot(); 
+    }
+
+    public void ReloadFinished()
+    {
+        currentAmmo = clipSize;
+
+        animator.SetInteger("Ammo", clipSize); 
+
+        reloadFinished?.Invoke();
     }
 
     // TODO weaken damage overtime
