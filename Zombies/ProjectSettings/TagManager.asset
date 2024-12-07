@@ -6,6 +6,7 @@ TagManager:
   tags:
   - CharacterFeet
   - CameraHolder
+  - beeEnemy
   layers:
   - Default
   - TransparentFX
